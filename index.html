@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>테토 / 에겐 성향 테스트</title>
+  <style>
+    body {
+      font-family: "Noto Sans KR", sans-serif;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      line-height: 1.6;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    fieldset {
+      border: 1px solid #e2e8f0;
+      border-radius: 1rem;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    legend {
+      font-weight: 600;
+      padding: 0 0.4rem;
+    }
+    label {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 0.8rem;
+    }
+    label span {
+      margin-left: 0.2rem;
+    }
+    #submitButton {
+      display: block;
+      width: 100%;
+      padding: 0.8rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 0.75rem;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 2rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>테토 / 에겐 성향 테스트</h1>
+  <form id="quizForm">
+    <!-- 질문이 JS로 삽입됩니다. -->
+
+    <!-- 성별 선택 -->
+    <fieldset>
+      <legend>성별을 선택하세요</legend>
+      <label><input type="radio" name="gender" value="남" required /> <span>남</span></label>
+      <label><input type="radio" name="gender" value="녀" /> <span>여</span></label>
+      <label><input type="radio" name="gender" value=" (선택안함)" /> <span>선택 안 함</span></label>
+    </fieldset>
+
+    <button id="submitButton" type="submit">결과 보기</button>
+  </form>
+  <div id="result"></div>
+
+  <script>
+    // 질문 목록 정의
+    const questions = [
+      // 테토 1~20
+      { id: 1, text: "의견을 돌려 말하기보다 직설적으로 표현한다.", cat: "t" },
+      { id: 2, text: "갈등이 생기면 정면 돌파를 택한다.", cat: "t" },
+      { id: 3, text: "팀에서 리더 역할을 맡는 게 편하다.", cat: "t" },
+      { id: 4, text: "결정을 내릴 때 속도가 중요하다고 생각한다.", cat: "t" },
+      { id: 5, text: "경쟁 상황이 오히려 동기 부여가 된다.", cat: "t" },
+      { id: 6, text: "많은 사람 앞에서 주목받는 것이 부담 없다.", cat: "t" },
+      { id: 7, text: "기쁨·분노 등 감정을 숨기지 않고 드러낸다.", cat: "t" },
+      { id: 8, text: "주말엔 운동·액티비티로 에너지를 발산한다.", cat: "t" },
+      { id: 9, text: "옳다고 믿으면 타인의 반대에도 쉽게 물러서지 않는다.", cat: "t" },
+      { id: 10, text: "패션에서 강렬한 색상·과감한 스타일을 시도해 본다.", cat: "t" },
+      { id: 11, text: "‘질문보다 명령문이 편하다’고 느낀 적이 있다.", cat: "t" },
+      { id: 12, text: "문제 해결보다 목표 달성이 우선이다.", cat: "t" },
+      { id: 13, text: "사람을 만날 때 첫인상이 중요하다고 본다.", cat: "t" },
+      { id: 14, text: "“할까 말까 할 땐 한다”가 내 좌우명 중 하나다.", cat: "t" },
+      { id: 15, text: "계획보다 즉흥적인 실행을 즐긴다.", cat: "t" },
+      { id: 16, text: "회식·모임에서 자연스럽게 분위기를 주도한다.", cat: "t" },
+      { id: 17, text: "실수했을 때는 변명 없이 바로 사과·해결한다.", cat: "t" },
+      { id: 18, text: "승부 게임에서 지고 넘어가는 일이 드물다.", cat: "t" },
+      { id: 19, text: "운동·헬스 등 신체 활동이 스트레스 해소법이다.", cat: "t" },
+      { id: 20, text: "목표를 세우면 숫자(성과)로 확인해야 마음이 놓인다.", cat: "t" },
+      // 에겐 21~40
+      { id: 21, text: "다른 사람의 기분 변화를 빨리 눈치챈다.", cat: "e" },
+      { id: 22, text: "갈등이 있으면 먼저 분위기를 부드럽게 만든다.", cat: "e" },
+      { id: 23, text: "팀에서는 조율·지원 역할이 편하다.", cat: "e" },
+      { id: 24, text: "중요한 결정 전엔 주변 의견을 충분히 듣는다.", cat: "e" },
+      { id: 25, text: "과도한 경쟁보다 함께 성장하는 환경을 선호한다.", cat: "e" },
+      { id: 26, text: "혼자만의 조용한 시간이 꼭 필요하다.", cat: "e" },
+      { id: 27, text: "감정을 표현할 때 상대를 배려해 완곡하게 말한다.", cat: "e" },
+      { id: 28, text: "섬세한 디테일이나 깔끔한 스타일을 좋아한다.", cat: "e" },
+      { id: 29, text: "사람들이 다투면 자연스럽게 중재자가 된다.", cat: "e" },
+      { id: 30, text: "내 의견이 상대에게 불편할까 봐 다시 확인한다.", cat: "e" },
+      { id: 31, text: "감정이 상하면 시간을 두고 천천히 풀려고 한다.", cat: "e" },
+      { id: 32, text: "“괜찮아?”처럼 안부·배려 멘트를 자주 건넨다.", cat: "e" },
+      { id: 33, text: "SNS나 메신저 이모티콘으로 감정을 풍부하게 표현한다.", cat: "e" },
+      { id: 34, text: "물건을 살 때 디자인·감성을 성능만큼 중시한다.", cat: "e" },
+      { id: 35, text: "급한 상황이어도 분위기를 살피며 이야기한다.", cat: "e" },
+      { id: 36, text: "기념일·생일 등 챙겨야 할 날을 잘 기억한다.", cat: "e" },
+      { id: 37, text: "협업할 때 충돌을 최소화하려 한다.", cat: "e" },
+      { id: 38, text: "모임에서 다른 사람이 말할 기회를 배려한다.", cat: "e" },
+      { id: 39, text: "내 감정보다 타인의 감정을 먼저 고려한다.", cat: "e" },
+      { id: 40, text: "고백·칭찬은 은근히 표현하는 편이다.", cat: "e" },
+    ];
+
+    // 1~5 선택 라벨 텍스트
+    const labels = ["전혀 그렇지 않다", "그렇지 않다", "보통이다", "그렇다", "매우 그렇다"];
+
+    // 질문 동적 생성
+    const formElem = document.getElementById("quizForm");
+    const submitBtn = document.getElementById("submitButton");
+
+    questions.forEach((q) => {
+      const fs = document.createElement("fieldset");
+      const lg = document.createElement("legend");
+      lg.textContent = `${q.id}. ${q.text}`;
+      fs.appendChild(lg);
+
+      labels.forEach((labelText, idx) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = `q${q.id}`;
+        input.value = idx + 1; // 1~5
+        if (idx === 0) input.required = true; // 첫 항목에 required
+        label.appendChild(input);
+        const span = document.createElement("span");
+        span.textContent = labelText;
+        label.appendChild(span);
+        fs.appendChild(label);
+      });
+
+      // submit 버튼 앞에 삽입
+      formElem.insertBefore(fs, submitBtn);
+    });
+
+    // 결과 계산
+    formElem.addEventListener("submit", (e) => {
+      e.preventDefault();
+      let tSum = 0,
+        eSum = 0;
+      questions.forEach((q) => {
+        const val = parseInt(document.querySelector(`input[name="q${q.id}"]:checked`).value, 10);
+        q.cat === "t" ? (tSum += val) : (eSum += val);
+      });
+      const diff = tSum - eSum;
+      let category = "균형";
+      if (diff >= 15) category = "테토";
+      else if (diff <= -15) category = "에겐";
+
+      const gender = document.querySelector('input[name="gender"]:checked').value;
+      const resultDiv = document.getElementById("result");
+      resultDiv.textContent = `당신의 유형은: ${category}${gender}`;
+    });
+  </script>
+</body>
+</html>

@@ -61,7 +61,6 @@
       <legend>성별을 선택하세요</legend>
       <label><input type="radio" name="gender" value="남" required /> <span>남</span></label>
       <label><input type="radio" name="gender" value="녀" /> <span>여</span></label>
-      <label><input type="radio" name="gender" value=" (선택안함)" /> <span>선택 안 함</span></label>
     </fieldset>
 
     <button id="submitButton" type="submit">결과 보기</button>
@@ -127,43 +126,3 @@
       const lg = document.createElement("legend");
       lg.textContent = `${q.id}. ${q.text}`;
       fs.appendChild(lg);
-
-      labels.forEach((labelText, idx) => {
-        const label = document.createElement("label");
-        const input = document.createElement("input");
-        input.type = "radio";
-        input.name = `q${q.id}`;
-        input.value = idx + 1; // 1~5
-        if (idx === 0) input.required = true; // 첫 항목에 required
-        label.appendChild(input);
-        const span = document.createElement("span");
-        span.textContent = labelText;
-        label.appendChild(span);
-        fs.appendChild(label);
-      });
-
-      // submit 버튼 앞에 삽입
-      formElem.insertBefore(fs, submitBtn);
-    });
-
-    // 결과 계산
-    formElem.addEventListener("submit", (e) => {
-      e.preventDefault();
-      let tSum = 0,
-        eSum = 0;
-      questions.forEach((q) => {
-        const val = parseInt(document.querySelector(`input[name="q${q.id}"]:checked`).value, 10);
-        q.cat === "t" ? (tSum += val) : (eSum += val);
-      });
-      const diff = tSum - eSum;
-      let category = "균형";
-      if (diff >= 15) category = "테토";
-      else if (diff <= -15) category = "에겐";
-
-      const gender = document.querySelector('input[name="gender"]:checked').value;
-      const resultDiv = document.getElementById("result");
-      resultDiv.textContent = `당신의 유형은: ${category}${gender}`;
-    });
-  </script>
-</body>
-</html>
